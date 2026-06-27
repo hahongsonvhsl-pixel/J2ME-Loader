@@ -16,7 +16,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug -Pandroid.injected.build.abi=arm64-v8a
       - name: Find APK
         run: find . -name "*.apk" -type f
       - name: Upload APK

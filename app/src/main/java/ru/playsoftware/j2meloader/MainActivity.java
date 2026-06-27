@@ -137,8 +137,8 @@ public class MainActivity extends BaseActivity {
                     case MotionEvent.ACTION_UP:
                         if (System.currentTimeMillis() - touchStartTime < 200) {
                             removeFloatingIcon();
-                            android.app.ActivityManager am = (android.app.ActivityManager) getSystemService(ACTIVITY_SERVICE);
                             Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             startActivity(intent);
                         }
                         return true;
