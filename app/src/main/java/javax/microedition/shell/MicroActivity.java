@@ -22,7 +22,9 @@ package javax.microedition.shell;
 import static ru.playsoftware.j2meloader.util.Constants.*;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
