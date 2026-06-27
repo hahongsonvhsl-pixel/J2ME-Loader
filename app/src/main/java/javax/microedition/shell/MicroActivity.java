@@ -423,6 +423,10 @@ public class MicroActivity extends AppCompatActivity {
 		inflater.inflate(R.menu.midlet_displayable, menu);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
 			menu.findItem(R.id.action_lock_orientation).setVisible(true);
+        menu.add(0, 9001, 0, "Ẩn ứng dụng");
+        menu.add(0, 9002, 0, "Treo tắt màn");
+        menu.add(0, 9003, 0, "Hẹn giờ tắt");
+        menu.add(0, 9004, 0, "Tiết kiệm pin");
 		}
 		if (actionBarEnabled) {
 			menu.findItem(R.id.action_ime_keyboard).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -455,7 +459,32 @@ public class MicroActivity extends AppCompatActivity {
 	@Override
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.action_exit_midlet) {
+		if (id == 9001) {
+            // Ẩn ứng dụng
+            PackageManager pm = getPackageManager();
+            pm.setComponentEnabledSetting(
+                new ComponentName(this, getClass()),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+            return true;
+        } else if (id == 9002) {
+            // Treo tắt màn
+            getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            return true;
+        } else if (id == 9003) {
+            // Hẹn giờ tắt 30 phút
+            new CountDownTimer(30 * 60 * 1000, 1000) {
+                public void onTick(long m) {}
+                public void onFinish() { finish(); }
+            }.start();
+            android.widget.Toast.makeText(MicroActivity.this, "Tắt sau 30 phút", android.widget.Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (id == 9004) {
+            // Tiết kiệm pin - giảm độ sáng
+            android.provider.Settings.System.putInt(getContentResolver(),
+                android.provider.Settings.System.SCREEN_BRIGHTNESS, 10);
+            return true;
+        } else if (id == R.id.action_exit_midlet) {
 			showExitConfirmation();
 		} else if (id == R.id.action_save_log) {
 			saveLog();
