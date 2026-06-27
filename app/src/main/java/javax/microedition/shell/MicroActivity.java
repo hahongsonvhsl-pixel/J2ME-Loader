@@ -473,7 +473,7 @@ public class MicroActivity extends AppCompatActivity {
             return true;
         } else if (id == 9003) {
             // Hẹn giờ tắt 30 phút
-            new (30 * 60 * 1000, 1000) {
+            new CountDownTimer(30 * 60 * 1000, 1000) {
                 public void onTick(long m) {}
                 public void onFinish() { finish(); }
             }.start();
