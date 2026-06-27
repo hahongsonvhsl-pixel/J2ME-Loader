@@ -23,7 +23,8 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.ViewConfiguration;import android.os.CountDownTimerimport;
+import android.view.ViewConfigurationimport android.os.CountDownTimerimport;;
+import android.os.CountDownTimer;
 
 import android.widget.Toast;
 
