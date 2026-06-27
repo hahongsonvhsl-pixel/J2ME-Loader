@@ -16,11 +16,11 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
       - name: Build Debug APK
-        run: ./gradlew assembleDebug -Pandroid.injected.build.abi=arm64-v8a
+        run: ./gradlew assembleRelease -Pandroid.injected.build.abi=arm64-v8a
       - name: Find APK
         run: find . -name "*.apk" -type f
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: J2ME-Loader-debug
+          name: J2ME-Loader-release
           path: "**/*.apk"
