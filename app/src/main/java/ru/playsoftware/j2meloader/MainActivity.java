@@ -7,6 +7,13 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.PopupMenu;
+import android.graphics.PixelFormat;
+import android.provider.Settings;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -37,6 +44,8 @@ public class MainActivity extends BaseActivity {
             new PickDirResultContract(), this::onPickDirResult);
     private SharedPreferences preferences;
     private AppListModel appListModel;
+    private WindowManager windowManager;
+    private ImageView floatingIcon;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,10 +88,71 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(android.view.MenuItem item) {
         switch (item.getItemId()) {
             case 1: finish(); return true;
-            case 2: moveTaskToBack(true); return true;
+            case 2: showFloatingIcon(); return true;
             case 3: showSpeedDialog(); return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showFloatingIcon() {
+        if (!Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+            Toast.makeText(this, "Vui long cap quyen hien thi tren ung dung khac", Toast.LENGTH_LONG).show();
+            return;
+        }
+        moveTaskToBack(true);
+        if (floatingIcon != null) return;
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        floatingIcon = new ImageView(this);
+        floatingIcon.setImageResource(R.mipmap.ic_launcher);
+        floatingIcon.setAlpha(0.9f);
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                150, 150,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT);
+        params.gravity = Gravity.TOP | Gravity.START;
+        params.x = 0;
+        params.y = 200;
+        windowManager.addView(floatingIcon, params);
+        floatingIcon.setOnTouchListener(new android.view.View.OnTouchListener() {
+            int initialX, initialY;
+            float initialTouchX, initialTouchY;
+            long touchStartTime;
+            @Override
+            public boolean onTouch(android.view.View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = params.x; initialY = params.y;
+                        initialTouchX = event.getRawX(); initialTouchY = event.getRawY();
+                        touchStartTime = System.currentTimeMillis();
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        params.x = initialX + (int)(event.getRawX() - initialTouchX);
+                        params.y = initialY + (int)(event.getRawY() - initialTouchY);
+                        windowManager.updateViewLayout(floatingIcon, params);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        if (System.currentTimeMillis() - touchStartTime < 200) {
+                            removeFloatingIcon();
+                            android.app.ActivityManager am = (android.app.ActivityManager) getSystemService(ACTIVITY_SERVICE);
+                            Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+                            startActivity(intent);
+                        }
+                        return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void removeFloatingIcon() {
+        if (floatingIcon != null && windowManager != null) {
+            windowManager.removeView(floatingIcon);
+            floatingIcon = null;
+        }
     }
 
     private void showSpeedDialog() {
