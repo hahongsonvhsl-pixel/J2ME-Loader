@@ -147,10 +147,6 @@ public class AppInstaller {
 		return Single.create(emitter -> {
 			srcJar = FileUtils.getFileForUri(context, jarUri);
 			manifest = loadManifest(srcJar);
-			if (!manifest.equals(newDesc)) {
-				emitter.onSuccess(STATUS_UNMATCHED);
-				return;
-			}
 			int result = checkDescriptor();
 			emitter.onSuccess(result);
 		});
@@ -394,7 +390,7 @@ public class AppInstaller {
 	}
 
 	private void downloadJar() throws ConverterException {
-		Uri jarUri = Uri.parse(newDesc.getJarUrl());
+		Uri jarUri =Uri.parse(newDesc.getJarUrl());
 		if (jarUri.getScheme() == null) {
 			String schemeOfJadSource = this.uri.getScheme();
 			if ("http".equals(schemeOfJadSource) || "https".equals(schemeOfJadSource)) {
