@@ -130,22 +130,7 @@ public class AppInstaller {
 
 		if (name.toLowerCase().endsWith(".jad")) {
 			newDesc = new Descriptor(srcFile, true);
-			String url = newDesc.getJarUrl();
-			if (url == null) {
-				throw new ConverterException("Jad not have " + Descriptor.MIDLET_JAR_URL);
-			}
-			Uri uri = Uri.parse(url);
-			String scheme = uri.getScheme();
-			String host = uri.getHost();
-			if (isLocal && scheme == null && host == null) {
-				if (isContentUri && !FileUtils.isExternalStorageLegacy()) {
-					emitter.onSuccess(STATUS_NEED_JAD);
-					return;
-				} else if (!checkJarFile(srcFile)) {
-					emitter.onSuccess(STATUS_UNMATCHED);
-					return;
-				}
-			}
+			
 		} else if (name.toLowerCase().endsWith(".kjx")) {
 			// Load kjx file
 			parseKjx();
